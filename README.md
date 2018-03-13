@@ -76,7 +76,6 @@ kubectl get pods --all-namespaces
 由于kubeadm安装时也要从google的源上下载，这里配置一个离线的包[kubeadm](https://github.com/sails/kube/tree/master/other/)：
 ```
 # ubuntu
-apt install -y -f gdebi
-apt install -y -f socat
+
 dpkg -i kubeadm.deb kubectl.deb kubelet.deb kube-cni.deb
 ```
