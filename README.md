@@ -1,21 +1,21 @@
 # kube
-由于不能从google container上直接pull镜像，所以这里通过docker hub的Automated Builds功能从项目的dockerfile中Build到docker的官方服务器上，然后再从它们上面拉取.
+由于不能从k8s.gcr.io上直接pull镜像，所以这里通过docker hub的Automated Builds功能从项目的dockerfile中Build到docker的官方服务器上，然后再从它们上面拉取.
 
-##	kube 1.5.2需要的镜像:
+##	kube 1.9.3需要的镜像:
 ```
-gcr.io/google_containers/kube-proxy-amd64                v1.5.2
-gcr.io/google_containers/kube-discovery-amd64            1.0
-gcr.io/google_containers/kubedns-amd64                   1.9
-gcr.io/google_containers/kube-scheduler-amd64            v1.5.2
-gcr.io/google_containers/kube-controller-manager-amd64   v1.5.2
-gcr.io/google_containers/kube-apiserver-amd64            v1.5.2
-gcr.io/google_containers/etcd-amd64                      3.0.14-kubeadm
-gcr.io/google_containers/kube-dnsmasq-amd64              1.4
-gcr.io/google_containers/dnsmasq-metrics-amd64           1.0
-gcr.io/google_containers/exechealthz-amd64               1.2
-gcr.io/google_containers/pause-amd64                     3.0
-kubernetes/heapster                                      canary
-gcr.io/google_containers/kubernetes-dashboard-amd64      v1.5.1
+k8s.gcr.io/kube-proxy-amd64                v1.9.3
+k8s.gcr.io/kube-scheduler-amd64            v1.9.3
+k8s.gcr.io/kube-controller-manager-amd64   v1.9.3
+k8s.gcr.io/kube-apiserver-amd64            v1.9.3
+
+k8s.gcr.io/etcd-amd64                      3.1.10
+k8s.gcr.io/pause-amd64                     3.0
+
+k8s.gcr.io/k8s-dns-sidecarkube-amd64       1.14.7
+k8s.gcr.io/k8s-dns-kube-dns-amd64          1.14.7
+k8s.gcr.io/k8s-dns-dnsmasq-nanny           1.14.7
+
+k8s.gcr.io/kubernetes-dashboard-amd64      v1.8.3
 ```
 
 ## docker hub上设置
@@ -23,32 +23,32 @@ gcr.io/google_containers/kubernetes-dashboard-amd64      v1.5.1
 
 ## 更改tag
 ```
-images=(kube-proxy-amd64:v1.5.2 kube-discovery-amd64:1.0 kubedns-amd64:1.9 kube-scheduler-amd64:v1.5.2 kube-controller-manager-amd64:v1.5.2 kube-apiserver-amd64:v1.5.2 etcd-amd64:3.0.14-kubeadm kube-dnsmasq-amd64:1.4 exechealthz-amd64:1.2 pause-amd64:3.0 dnsmasq-metrics-amd64:1.0)
+images=(kube-proxy-amd64:v1.9.3 kube-scheduler-amd64:v1.9.3 kube-controller-manager-amd64:v1.9.3 kube-apiserver-amd64:v1.9.3 etcd-amd64:3.1.10 pause-amd64:3.0 k8s-dns-sidecar-amd64:1.14.7 k8s-dns-kube-dns-amd64:1.14.7 k8s-dns-dnsmasq-nanny:1.14.7 kubernetes-dashboard-amd64:v1.8.3)
 for imageName in ${images[@]} ; do
-  docker pull  sailsxu/$imageName
-  docker tag  sailsxu/$imageName gcr.io/google_containers/$imageName
+  docker pull  thomas67/$imageName
+  docker tag  thomas67/$imageName k8s.gcr.io/$imageName
 done
 # 监控
 images=(heapster:canary heapster_grafana:v2.6.0 heapster_influxdb:v0.6)
 for imageName in ${images[@]} ; do
-  docker pull  sailsxu/$imageName
-  docker tag  sailsxu/$imageName kubernetes/$imageName
+  docker pull  thomas67/$imageName
+  docker tag  thomas67/$imageName kubernetes/$imageName
 done
 # 日志
 images=(elasticsearch:v2.4.1-1 fluentd-elasticsearch:1.22 kibana:v4.6.1-1)
 for imageName in ${images[@]} ; do
-  docker pull  sailsxu/$imageName
-  docker tag  sailsxu/$imageName gcr.io/google_containers/$imageName
+  docker pull  thomas67/$imageName
+  docker tag  thomas67/$imageName k8s.gcr.io/$imageName
 done
 ```
 
 
 ## 通过kubeadm安装
 ```
-kubeadm init --use-kubernetes-version v1.5.2
+kubeadm init --use-kubernetes-version v1.9.3
 
 #或者(可以通过netstat -rn来看是否需要重新设置 --pod-network-cidr，默认的是10.244.0.0/16)
-#kubeadm init --use-kubernetes-version v1.5.2 --pod-network-cidr=172.16.0.0/16
+#kubeadm init --use-kubernetes-version v1.9.3 --pod-network-cidr=172.16.0.0/16
 #当时加入某个结点时
 #kubeadm join --token=xxx.xxx ip
 ```
